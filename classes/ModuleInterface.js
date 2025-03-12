@@ -1,6 +1,7 @@
 class ModuleInterface {
     constructor() {
         this.name = 'Some Module';
+        this.active = false;
     }
 
 }
