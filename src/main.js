@@ -44,7 +44,7 @@ function updateModules() {
     allModules.forEach(module => {
         if (module instanceof ModuleInformative) {
             if (Math.random() < 0.1) {
-                module.value += Math.random() < 1 ? -1 : 1;
+                module.value += Math.random() < 0.5 ? -1 : 1;
             }
         }
         if (module instanceof ModuleInteractive) {
