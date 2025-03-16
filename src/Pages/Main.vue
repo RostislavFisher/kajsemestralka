@@ -7,14 +7,17 @@ export default {
   data() {
     return {
       activeInteractiveModules: [],
-      activeInformativeModules: []
+      activeInformativeModules: [],
+      currentTime: '',
+      currentDate: ''
     };
   },
   mounted() {
     this.loadModules();
     this.interval = setInterval(() => {
       this.loadModules();
-    }, 3000);
+      this.updateTime();
+    }, 100); // Update every second
   },
   beforeUnmount() {
     clearInterval(this.interval);
@@ -32,7 +35,11 @@ export default {
     toggleModuleState(module) {
       module.isToggled = !module.isToggled;
       localStorage.setItem("activeInteractiveModules", JSON.stringify(this.activeInteractiveModules));
-      // todo: reactivity issue
+    },
+    updateTime() {
+      const now = new Date();
+      this.currentTime = now.toLocaleTimeString('en-GB'); // European format (24-hour)
+      this.currentDate = now.toLocaleDateString('en-GB'); // Date in European format
     }
   }
 };
@@ -43,14 +50,14 @@ export default {
     <div class="row justify-content-between">
       <div class="col-4">
         <div>
-          <p>11:50</p>
-          <p>26.02.2025, WED</p>
+          <p>{{ currentTime }}</p>
+          <p>{{ currentDate }}</p>
         </div>
       </div>
       <div class="col-4">
         <div>
           <p>Praha</p>
-          <p>16C</p>
+          <p>16°C</p>
         </div>
       </div>
     </div>
