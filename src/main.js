@@ -34,12 +34,17 @@ function saveModules() {
 }
 
 function updateModules() {
+    const activeInteractiveModules = loadModulesFromStorage("activeInteractiveModules", ModuleInteractive);
+    const inactiveInteractiveModules = loadModulesFromStorage("inactiveInteractiveModules", ModuleInteractive);
+    const activeInformativeModules = loadModulesFromStorage("activeInformativeModules", ModuleInformative);
+    const inactiveInformativeModules = loadModulesFromStorage("inactiveInformativeModules", ModuleInformative);
+
     const allModules = [...activeInteractiveModules, ...inactiveInteractiveModules, ...activeInformativeModules, ...inactiveInformativeModules];
 
     allModules.forEach(module => {
         if (module instanceof ModuleInformative) {
             if (Math.random() < 0.1) {
-                module.value += Math.random() < 0.5 ? -1 : 1;
+                module.value += Math.random() < 1 ? -1 : 1;
             }
         }
         if (module instanceof ModuleInteractive) {
@@ -49,7 +54,11 @@ function updateModules() {
         }
     });
 
-    saveModules();
+    localStorage.setItem("activeInteractiveModules", JSON.stringify(activeInteractiveModules));
+    localStorage.setItem("inactiveInteractiveModules", JSON.stringify(inactiveInteractiveModules));
+    localStorage.setItem("activeInformativeModules", JSON.stringify(activeInformativeModules));
+    localStorage.setItem("inactiveInformativeModules", JSON.stringify(inactiveInformativeModules));
+
     console.log("Modules updated:", { activeInteractiveModules, inactiveInteractiveModules, activeInformativeModules, inactiveInformativeModules });
 }
 
