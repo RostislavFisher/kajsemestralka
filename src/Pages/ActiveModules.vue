@@ -8,11 +8,21 @@ export default {
   components: { Module },
   data() {
     return {
-      activeInteractiveModules: this.getModules("activeInteractiveModules"),
-      inactiveInteractiveModules: this.getModules("inactiveInteractiveModules"),
-      activeInformativeModules: this.getModules("activeInformativeModules"),
-      inactiveInformativeModules: this.getModules("inactiveInformativeModules")
+      activeInteractiveModules: [],
+      inactiveInteractiveModules: [],
+      activeInformativeModules: [],
+      inactiveInformativeModules: [],
+      interval: null
     };
+  },
+  mounted() {
+    this.loadModules();
+    this.interval = setInterval(() => {
+      this.loadModules();
+    }, 3000);
+  },
+  beforeUnmount() {
+    clearInterval(this.interval);
   },
   methods: {
     addInteractiveModule() {
@@ -29,6 +39,12 @@ export default {
       } catch {
         return [];
       }
+    },
+    loadModules() {
+      this.activeInteractiveModules = this.getModules("activeInteractiveModules");
+      this.inactiveInteractiveModules = this.getModules("inactiveInteractiveModules");
+      this.activeInformativeModules = this.getModules("activeInformativeModules");
+      this.inactiveInformativeModules = this.getModules("inactiveInformativeModules");
     },
     saveModules() {
       localStorage.setItem("activeInteractiveModules", JSON.stringify(this.activeInteractiveModules));

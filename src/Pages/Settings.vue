@@ -9,6 +9,9 @@ export default {
   methods: {
     save() {
       localStorage.setItem("city", this.city);
+    },
+    reset() {
+      localStorage.clear();
     }
   }
 
@@ -19,6 +22,7 @@ export default {
 <div>
 <input v-model="city">
 </div>
+  <button v-on:click="reset">Reset</button>
   <button v-on:click="save">Save</button>
 </template>
 
