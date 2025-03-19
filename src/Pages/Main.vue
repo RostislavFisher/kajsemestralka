@@ -48,16 +48,16 @@ export default {
 <template>
   <div class="container">
     <div class="row justify-content-between">
-      <div class="col-4">
+      <div class="col-4 clock">
         <div>
-          <p>{{ currentTime }}</p>
-          <p>{{ currentDate }}</p>
+          <p class="clockTime">{{ currentTime }}</p>
+          <p class="clockDate">{{ currentDate }}</p>
         </div>
       </div>
-      <div class="col-4">
+      <div class="col-4 weather">
         <div>
-          <p>Praha</p>
-          <p>16°C</p>
+          <p class="weatherCity">Praha</p>
+          <p class="weatherTemp">16°C</p>
         </div>
       </div>
     </div>
@@ -71,7 +71,7 @@ export default {
         <div v-if="activeInteractiveModules.length === 0">No active interactive modules</div>
         <div class="row">
           <div
-              class="col"
+              class="col interactiveModule"
               v-for="module in activeInteractiveModules"
               :key="module.id"
               @click="toggleModuleState(module)"
@@ -100,11 +100,30 @@ export default {
 .activeModules {
   margin-top: 20px;
 }
-.col {
+.col.interactiveModule {
   cursor: pointer;
   transition: background-color 0.3s;
 }
-.col:hover {
+.col.interactiveModule:hover {
   background-color: #f0f0f0;
+}
+
+.clock {
+  border: dashed 1px #ccc;
+}
+.clockTime {
+  font-size: 3.5em;
+}
+.clockDate {
+  font-size: 2em;
+}
+.weather {
+  border: dashed 1px #ccc;
+}
+.weatherCity {
+  font-size: 2em;
+}
+.weatherTemp {
+  font-size: 3.5em;
 }
 </style>
