@@ -1,5 +1,7 @@
 <script>
 import Module from "@/components/Module.vue";
+import Weather from "../../classes/Weather.js";
+import WeatherSettings from "../../classes/WeatherSettings.js";
 
 export default {
   name: "Main",
@@ -9,18 +11,24 @@ export default {
       activeInteractiveModules: [],
       activeInformativeModules: [],
       currentTime: '',
-      currentDate: ''
+      currentDate: '',
+      city: localStorage.getItem("city") || "Praha",
+      cityTemp: localStorage.getItem("cityTemp") || "",
     };
   },
   mounted() {
     this.loadModules();
-    this.interval = setInterval(() => {
+    this.intervalModules = setInterval(() => {
       this.loadModules();
       this.updateTime();
-    }, 100); // Update every second
+    }, 100);
+    this.intervalWeather = setInterval(() => {
+      this.updateWeather();
+    }, 10000);
   },
   beforeUnmount() {
-    clearInterval(this.interval);
+    clearInterval(this.intervalModules);
+    clearInterval(this.intervalWeather);
   },
   methods: {
     loadModules() {
@@ -40,6 +48,18 @@ export default {
       const now = new Date();
       this.currentTime = now.toLocaleTimeString('en-GB'); // European format (24-hour)
       this.currentDate = now.toLocaleDateString('en-GB'); // Date in European format
+    },
+    updateWeather() {
+      // Fetch weather data from API
+      var weatherSettings = new WeatherSettings();
+      weatherSettings.city = localStorage.getItem("city") || "Praha";
+      weatherSettings.apiKey = localStorage.getItem("weatherAPIKey") || "";
+      var weatherProcess = new Weather(weatherSettings).getWeather();
+      weatherProcess.then((weather) => {
+        localStorage.setItem("cityTemp", weather.main.temp + "°C");
+      });
+      this.cityTemp = localStorage.getItem("cityTemp");
+
     }
   }
 };
@@ -56,8 +76,8 @@ export default {
       </div>
       <div class="col-4 weather">
         <div>
-          <p class="weatherCity">Praha</p>
-          <p class="weatherTemp">16°C</p>
+          <p class="weatherCity">{{city}}</p>
+          <p class="weatherTemp">{{ cityTemp }}</p>
         </div>
       </div>
     </div>
