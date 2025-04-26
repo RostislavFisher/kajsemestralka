@@ -35,20 +35,32 @@ export default {
 </script>
 
 <template>
-  <div>
-    <input v-model="city" placeholder="City">
-    <input v-model="weatherAPIKey" placeholder="Weather API Key">
-    <input type="file" accept="image/*" @change="onImageUpload">
+  <section>
+    <header>
+      <h1>Settings</h1>
+    </header>
 
-    <!-- Show the image preview if uploaded -->
-    <div v-if="backgroundImage" style="margin-top: 10px;">
+    <article>
+      <label for="city">City:</label>
+      <input id="city" v-model="city" placeholder="City">
+
+      <label for="weatherAPIKey">Weather API Key:</label>
+      <input id="weatherAPIKey" v-model="weatherAPIKey" placeholder="Weather API Key">
+
+      <label for="backgroundImageUpload">Upload Background Image:</label>
+      <input id="backgroundImageUpload" type="file" accept="image/*" @change="onImageUpload">
+    </article>
+
+    <aside v-if="backgroundImage" style="margin-top: 10px;">
       <p>Background preview:</p>
       <img :src="backgroundImage" style="max-width: 300px; max-height: 200px; object-fit: cover;">
-    </div>
+    </aside>
 
-    <button @click="reset">Reset</button>
-    <button @click="save">Save</button>
-  </div>
+    <nav style="margin-top: 20px;">
+      <button @click="reset">Reset</button>
+      <button @click="save">Save</button>
+    </nav>
+  </section>
 </template>
 
 <style scoped>

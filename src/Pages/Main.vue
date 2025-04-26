@@ -198,8 +198,8 @@ export default {
 </script>
 
 <template>
-  <div class="container">
-    <div class="row justify-content-between">
+  <main class="container">
+    <section class="row justify-content-between">
       <div class="col-4 clock">
         <div>
           <p class="clockTime">{{ currentTime }}</p>
@@ -208,10 +208,10 @@ export default {
       </div>
       <div class="col-4 weather-widget">
         <div class="weather-container">
-          <div class="weather-header" @click="refreshWeather">
+          <header class="weather-header" @click="refreshWeather">
             <h2 class="location">{{ formattedLocation }}</h2>
             <div class="temperature">{{ cityTemp }}</div>
-          </div>
+          </header>
 
           <div class="sky-display">
             <svg :width="'100%'" :height="'100%'" :style="{ backgroundColor: skyColor }">
@@ -221,10 +221,11 @@ export default {
                   :r="celestialBody.radius"
                   :fill="celestialBody.color"
                   :class="[celestialBody.type, {
-                'sunrise-effect': isSunrise,
-                'sunset-effect': isSunset
-              }]"
-                :filter="isSunVisible ? 'url(#sun-glow)' : 'none'"/>
+                  'sunrise-effect': isSunrise,
+                  'sunset-effect': isSunset
+                }]"
+                  :filter="isSunVisible ? 'url(#sun-glow)' : 'none'"
+              />
               <defs>
                 <filter id="sun-glow" x="-50%" y="-50%" width="200%" height="200%">
                   <feGaussianBlur stdDeviation="3" result="blur" />
@@ -234,7 +235,7 @@ export default {
             </svg>
           </div>
 
-          <div class="weather-footer">
+          <footer class="weather-footer">
             <div v-if="isNight" class="celestial-info">
               🌙 Next sunrise: {{ formatTime(citySunrise * 1000) }}
             </div>
@@ -247,44 +248,58 @@ export default {
             <div v-else class="celestial-info">
               ☀️ Daytime: {{ formatTime(citySunrise * 1000) }} - {{ formatTime(citySunset * 1000) }}
             </div>
-          </div>
+          </footer>
+
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="row justify-content-between">
+    <section class="row justify-content-between">
       <div class="col-12">
-        <router-link to="/activemodules">
-          <button>Active Modules</button>
-        </router-link>
 
-        <div class="activeModules">
+        <nav>
+          <router-link to="/activemodules">
+            <button type="button">Active Modules</button>
+          </router-link>
+        </nav>
+
+        <section class="activeModules">
           <h3>Active Interactive Modules</h3>
-          <div v-if="activeInteractiveModules.length === 0">No active interactive modules</div>
+          <div v-if="activeInteractiveModules.length === 0">
+            No active interactive modules
+          </div>
           <div class="row">
-            <div
+            <article
                 class="col-md-3 interactiveModule"
                 v-for="module in activeInteractiveModules"
                 :key="module.id"
                 @click="toggleModuleState(module)"
             >
               <Module :module="module" />
-            </div>
+            </article>
           </div>
-        </div>
+        </section>
 
-        <div class="activeModules">
+        <section class="activeModules">
           <h3>Active Informative Modules</h3>
-          <div v-if="activeInformativeModules.length === 0">No active informative modules</div>
-          <div class="row">
-            <div class="col-md-3" v-for="module in activeInformativeModules" :key="module.id">
-              <Module :module="module" />
-            </div>
+          <div v-if="activeInformativeModules.length === 0">
+            No active informative modules
           </div>
-        </div>
+          <div class="row">
+            <article
+                class="col-md-3"
+                v-for="module in activeInformativeModules"
+                :key="module.id"
+            >
+              <Module :module="module" />
+            </article>
+          </div>
+        </section>
+
       </div>
-    </div>
-  </div>
+    </section>
+
+  </main>
 </template>
 
 <style scoped>
