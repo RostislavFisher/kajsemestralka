@@ -253,25 +253,6 @@ export default {
             ></div>
 
             <div
-                v-if="isSunVisible && (isSunrise || isSunset)"
-                class="sun-rays"
-                :style="{
-                left: `${celestialBody.x}px`,
-                top: `${celestialBody.y}px`
-              }"
-            >
-              <div
-                  v-for="(ray, index) in sunRays"
-                  :key="index"
-                  class="ray"
-                  :style="{
-                  transform: `rotate(${index * 45}deg)`,
-                  height: `${10 + Math.random() * 10}px`
-                }"
-              ></div>
-            </div>
-
-            <div
                 v-if="isNight"
                 class="stars"
             >
@@ -308,7 +289,7 @@ export default {
       </div>
     </div>
 
-    <div class="row">
+    <div class="row justify-content-between">
       <div class="col-12">
         <router-link to="/activemodules">
           <button>Active Modules</button>
@@ -345,7 +326,13 @@ export default {
 
 <style scoped>
 .container {
-  padding: 20px;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+.row {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .clock {
@@ -493,5 +480,100 @@ export default {
   background-color: #f8f9fa;
   transform: translateY(-3px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .row.justify-content-between {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .clock, .weather-widget {
+    padding: 15px !important;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+
+  .clockTime {
+    font-size: 2rem;
+  }
+
+  .clockDate {
+    font-size: 1.2rem;
+  }
+
+  .temperature {
+    font-size: 2rem;
+  }
+
+  .sky-display {
+    height: 100px;
+    margin: 10px auto;
+  }
+
+  .celestial-body {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .activeModules {
+    padding: 10px;
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .activeModules .row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .activeModules .col-md-3 {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto 10px;
+  }
+
+  .weather-footer .celestial-info {
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  button {
+    width: 100%;
+    max-width: 280px;
+    padding: 10px;
+    margin: 0 auto 15px;
+    display: block;
+  }
+
+  .interactiveModule {
+    padding: 10px;
+    margin: 0 auto 10px;
+    max-width: 300px;
+  }
+
+  .interactiveModule:hover {
+    transform: none;
+  }
+
+  .sun-rays .ray {
+    height: 8px !important;
+  }
+
+  .weather-container {
+    text-align: center;
+  }
+
+  .weather-header, .weather-footer {
+    text-align: center;
+  }
 }
 </style>
