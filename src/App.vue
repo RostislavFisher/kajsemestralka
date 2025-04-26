@@ -11,6 +11,10 @@ function goBack() {
   }
 }
 
+function goToSettings() {
+  router.push('/settings');
+}
+
 const backgroundImage = localStorage.getItem("backgroundImage");
 </script>
 
@@ -22,11 +26,7 @@ const backgroundImage = localStorage.getItem("backgroundImage");
   <div class="linkingPanel">
     <div class="linkingPanelContent">
       <button @click="goBack">&laquo; Back</button>
-      <RouterLink to="/settings">
-        <button>
-          Settings
-        </button>
-      </RouterLink>
+      <button @click="goToSettings">Settings</button>
     </div>
   </div>
 
