@@ -13,6 +13,8 @@ app.use(router);
 app.mount('#app');
 
 const toggleSound = new Audio('/src/assets/sounds/minecraft_click.mp3');
+const upSound = new Audio('/src/assets/sounds/up.mp3');
+const downSound = new Audio('/src/assets/sounds/down.mp3');
 
 function loadModulesFromStorage(key, ModuleClass) {
     try {
@@ -52,6 +54,7 @@ function updateModules() {
     const activeInformativeModules = loadModulesFromStorage("activeInformativeModules", ModuleInformative);
     const inactiveInformativeModules = loadModulesFromStorage("inactiveInformativeModules", ModuleInformative);
 
+    const previousValues = activeInformativeModules.map(module => module.value);
     const allModules = [...activeInteractiveModules, ...inactiveInteractiveModules, ...activeInformativeModules, ...inactiveInformativeModules];
 
     allModules.forEach(module => {
@@ -64,6 +67,15 @@ function updateModules() {
             if (Math.random() < 0.1) {
                 module.isToggled = !module.isToggled;
             }
+        }
+    });
+
+    activeInformativeModules.forEach((module, index) => {
+        const previousValue = previousValues[index];
+        if (module.value > previousValue) {
+            upSound.play().catch(e => console.log("Audio play failed:", e));
+        } else if (module.value < previousValue) {
+            downSound.play().catch(e => console.log("Audio play failed:", e));
         }
     });
 
