@@ -61,7 +61,7 @@ function updateModules() {
             }
         }
         if (module instanceof ModuleInteractive) {
-            if (Math.random() < 0.9) {
+            if (Math.random() < 0.5) {
                 module.isToggled = !module.isToggled;
             }
         }
