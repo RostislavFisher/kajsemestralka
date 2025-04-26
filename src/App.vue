@@ -1,7 +1,10 @@
 <script setup>
 import { useRouter } from "vue-router";
+import { onMounted, onBeforeUnmount } from 'vue';
 
 const router = useRouter();
+
+let connectivityCheckInterval;
 
 function goBack() {
   if (window.history.length > 1) {
@@ -14,6 +17,25 @@ function goBack() {
 function goToSettings() {
   router.push('/settings');
 }
+
+function checkConnectivity() {
+  if (!navigator.onLine) {
+    alert('You are currently offline. Return as long as connection is up!');
+  }
+}
+
+onMounted(() => {
+  checkConnectivity();
+  connectivityCheckInterval = setInterval(checkConnectivity, 1000);
+  window.addEventListener('online', checkConnectivity);
+  window.addEventListener('offline', checkConnectivity);
+});
+
+onBeforeUnmount(() => {
+  clearInterval(connectivityCheckInterval);
+  window.removeEventListener('online', checkConnectivity);
+  window.removeEventListener('offline', checkConnectivity);
+});
 
 const backgroundImage = localStorage.getItem("backgroundImage");
 </script>
@@ -29,7 +51,6 @@ const backgroundImage = localStorage.getItem("backgroundImage");
       <button @click="goToSettings">Settings</button>
     </div>
   </div>
-
 </template>
 
 <style scoped>
