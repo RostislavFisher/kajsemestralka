@@ -370,15 +370,7 @@ export default {
   width: 100%;
   height: 100%;
 }
-@keyframes sunrisePulse {
-  0% { opacity: 0.8; transform: scale(0.95); }
-  100% { opacity: 1; transform: scale(1.05); }
-}
 
-@keyframes sunsetPulse {
-  0% { opacity: 0.9; transform: scale(0.98); }
-  100% { opacity: 1; transform: scale(1.02); }
-}
 
 .weather-footer {
   text-align: center;
