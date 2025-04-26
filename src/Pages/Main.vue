@@ -126,12 +126,14 @@ export default {
       this.updateTime();
     }, 100);
     this.weatherInterval = setInterval(this.fetchWeather, 600000);
+    this.modulesInterval = setInterval(this.loadModules, 500);
     this.generateStars();
     this.fetchWeather();
   },
   beforeUnmount() {
     clearInterval(this.interval);
     clearInterval(this.weatherInterval);
+    clearInterval(this.modulesInterval);
   },
   methods: {
     loadModules() {
