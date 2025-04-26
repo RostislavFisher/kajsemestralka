@@ -15,7 +15,6 @@ export default {
       cityTemp: localStorage.getItem("cityTemp") || "",
       citySunrise: parseInt(localStorage.getItem("citySunrise")) || 0,
       citySunset: parseInt(localStorage.getItem("citySunset")) || 0,
-      stars: [],
       weatherAPIKey: localStorage.getItem("weatherAPIKey") || ""
     };
   },
@@ -111,13 +110,6 @@ export default {
       const sunset = this.citySunset * 1000;
       return now < sunrise || now > sunset;
     },
-    sunRays() {
-      const rays = [];
-      for (let i = 0; i < 8; i++) {
-        rays.push(i);
-      }
-      return rays;
-    },
   },
   mounted() {
     this.loadModules();
@@ -127,7 +119,6 @@ export default {
     }, 100);
     this.weatherInterval = setInterval(this.fetchWeather, 600000);
     this.modulesInterval = setInterval(this.loadModules, 500);
-    this.generateStars();
     this.fetchWeather();
   },
   beforeUnmount() {
@@ -177,18 +168,6 @@ export default {
         this.cityTemp = "Error";
       }
     },
-    generateStars() {
-      const stars = [];
-      for (let i = 0; i < 50; i++) {
-        stars.push({
-          x: Math.random() * 100,
-          y: Math.random() * 60,
-          r: Math.random() * 1.2,
-          opacity: 0.5 + Math.random() * 0.5
-        });
-      }
-      this.stars = stars;
-    },
     interpolateColor(color1, color2, factor) {
       const hex = color => {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
@@ -234,41 +213,25 @@ export default {
             <div class="temperature">{{ cityTemp }}</div>
           </div>
 
-          <div class="sky-display" :style="{ backgroundColor: skyColor }">
-
-            <div
-                class="celestial-body"
-                :class="[celestialBody.type, {
+          <div class="sky-display">
+            <svg :width="'100%'" :height="'100%'" :style="{ backgroundColor: skyColor }">
+              <circle
+                  :cx="celestialBody.x"
+                  :cy="celestialBody.y"
+                  :r="celestialBody.radius"
+                  :fill="celestialBody.color"
+                  :class="[celestialBody.type, {
                 'sunrise-effect': isSunrise,
                 'sunset-effect': isSunset
               }]"
-                :style="{
-                left: `${celestialBody.x}px`,
-                top: `${celestialBody.y}px`,
-                width: `${celestialBody.radius * 2}px`,
-                height: `${celestialBody.radius * 2}px`,
-                backgroundColor: celestialBody.color,
-                boxShadow: isSunVisible ? `0 0 20px ${celestialBody.color}` : 'none'
-              }"
-            ></div>
-
-            <div
-                v-if="isNight"
-                class="stars"
-            >
-              <div
-                  v-for="(star, index) in stars"
-                  :key="'star'+index"
-                  class="star"
-                  :style="{
-                  left: `${star.x}%`,
-                  top: `${star.y}%`,
-                  width: `${star.r}px`,
-                  height: `${star.r}px`,
-                  opacity: star.opacity
-                }"
-              ></div>
-            </div>
+                :filter="isSunVisible ? 'url(#sun-glow)' : 'none'"/>
+              <defs>
+                <filter id="sun-glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+            </svg>
           </div>
 
           <div class="weather-footer">
@@ -402,51 +365,19 @@ export default {
   margin: 10px 0;
 }
 
-.celestial-body {
-  position: absolute;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: all 0.5s ease;
+.sky-display svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+@keyframes sunrisePulse {
+  0% { opacity: 0.8; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1.05); }
 }
 
-.celestial-body.sun {
-  background: radial-gradient(circle, #ffde00, #ff8c00);
-}
-
-.celestial-body.moon {
-  background: radial-gradient(circle, #f5f5f5, #d0d0d0);
-}
-
-.sun-rays {
-  position: absolute;
-  width: 0;
-  height: 0;
-  transform: translate(-50%, -50%);
-}
-
-.ray {
-  position: absolute;
-  width: 2px;
-  background: rgba(255, 165, 0, 0.6);
-  transform-origin: bottom center;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.stars {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 40px;
-}
-
-.star {
-  position: absolute;
-  background-color: white;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
+@keyframes sunsetPulse {
+  0% { opacity: 0.9; transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1.02); }
 }
 
 .weather-footer {
@@ -562,10 +493,6 @@ export default {
 
   .interactiveModule:hover {
     transform: none;
-  }
-
-  .sun-rays .ray {
-    height: 8px !important;
   }
 
   .weather-container {
