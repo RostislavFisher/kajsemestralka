@@ -61,7 +61,7 @@ function updateModules() {
             }
         }
         if (module instanceof ModuleInteractive) {
-            if (Math.random() < 0.5) {
+            if (Math.random() < 0.1) {
                 module.isToggled = !module.isToggled;
             }
         }
@@ -81,4 +81,4 @@ function updateModules() {
     console.log("Modules updated:", { activeInteractiveModules, inactiveInteractiveModules, activeInformativeModules, inactiveInformativeModules });
 }
 
-setInterval(updateModules, 3000);
+setInterval(updateModules, 1000);
