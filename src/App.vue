@@ -1,8 +1,14 @@
 <script setup>
-import {createRouter as $router} from "vue-router/dist/vue-router.esm-browser.js";
+import { useRouter } from "vue-router";
 
-function hasHistory() {
-  return window.history.length > 1;
+const router = useRouter();
+
+function goBack() {
+  if (window.history.length > 1) {
+    router.go(-1);
+  } else {
+    router.push('/');
+  }
 }
 
 const backgroundImage = localStorage.getItem("backgroundImage");
@@ -15,14 +21,7 @@ const backgroundImage = localStorage.getItem("backgroundImage");
   </div>
   <div class="linkingPanel">
     <div class="linkingPanelContent">
-      <RouterLink to="/">
-        <button
-            type="button"
-            @click="hasHistory() ? $router.go(-1) : $router.push('/')">&laquo;
-          Back
-        </button>
-
-      </RouterLink>
+      <button @click="goBack">&laquo; Back</button>
       <RouterLink to="/settings">
         <button>
           Settings
@@ -34,4 +33,23 @@ const backgroundImage = localStorage.getItem("backgroundImage");
 </template>
 
 <style scoped>
+.page {
+  flex: 1;
+  overflow-y: auto;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.linkingPanel {
+  height: 60px;
+  background: #f0f0f0;
+  display: flex;
+  //align-items: center;
+  //justify-content: center;
+}
+
+.linkingPanelContent {
+  display: flex;
+  gap: 10px;
+}
 </style>
