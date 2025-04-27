@@ -9,7 +9,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="module">
     <h2>{{ module.name }}</h2>
     <p v-if="module.isToggled !== undefined"><strong>Active:</strong> {{ module.isToggled ? 'Yes' : 'No' }}</p>
     <p v-if="module.value !== undefined"><strong>Value:</strong> {{ module.value }}</p>
@@ -17,11 +17,12 @@ export default {
 </template>
 
 <style scoped>
-div {
+.module {
   border: 1px solid #ccc;
   padding: 10px;
   border-radius: 5px;
   width: 200px;
   background-color: #f9f9f9;
+  width:250px;
 }
 </style>

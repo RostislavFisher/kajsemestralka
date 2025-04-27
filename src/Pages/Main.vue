@@ -269,14 +269,10 @@ export default {
             No active interactive modules
           </div>
           <div class="row">
-            <article
-                class="col-md-3 interactiveModule"
-                v-for="module in activeInteractiveModules"
-                :key="module.id"
-                @click="toggleModuleState(module)"
-            >
-              <Module :module="module" />
-            </article>
+            <Module :module="module" class="col-md-3 interactiveModule"
+                    v-for="module in activeInteractiveModules"
+                    :key="module.id"
+                    @click="toggleModuleState(module)"/>
           </div>
         </section>
 
@@ -286,13 +282,9 @@ export default {
             No active informative modules
           </div>
           <div class="row">
-            <article
-                class="col-md-3"
-                v-for="module in activeInformativeModules"
-                :key="module.id"
-            >
-              <Module :module="module" />
-            </article>
+            <Module :module="module" class="col-md-3"
+                    v-for="module in activeInformativeModules"
+                    :key="module.id"/>
           </div>
         </section>
 
@@ -304,8 +296,9 @@ export default {
 
 <style scoped>
 .container {
-  overflow-x: hidden;
-  max-width: 100vw;
+  padding: 10px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .row {
