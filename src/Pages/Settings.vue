@@ -5,11 +5,41 @@ export default {
     return {
       city: localStorage.getItem("city") || "Praha",
       weatherAPIKey: localStorage.getItem("weatherAPIKey") || "",
-      backgroundImage: localStorage.getItem("backgroundImage") || ""
+      backgroundImage: localStorage.getItem("backgroundImage") || "",
+      errors: {
+        city: "",
+        weatherAPIKey: ""
+      }
     }
   },
   methods: {
+    validate() {
+      let isValid = true;
+
+      this.errors = {
+        city: "",
+        weatherAPIKey: ""
+      };
+
+      if (!this.city.trim()) {
+        this.errors.city = "City is required";
+        isValid = false;
+      } else if (!/^[a-zA-Z\u0080-\u024F\s\/\-\)\(\`\.\"\']+$/.test(this.city)) {
+        this.errors.city = "City contains invalid characters";
+        isValid = false;
+      }
+
+      if (!this.weatherAPIKey.trim()) {
+        this.errors.weatherAPIKey = "API key is required";
+        isValid = false;
+      }
+
+      return isValid;
+    },
     save() {
+      if (!this.validate()) {
+        return;
+      }
       localStorage.setItem("city", this.city);
       localStorage.setItem("weatherAPIKey", this.weatherAPIKey);
       localStorage.setItem("cityTemp", "");
@@ -18,6 +48,12 @@ export default {
     onImageUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image must be smaller than 5MB");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => {
         this.backgroundImage = e.target.result;
@@ -34,17 +70,29 @@ export default {
       <h2>Settings</h2>
       <div class="input-group">
         <label for="city">City:</label>
-        <input id="city" v-model="city" placeholder="City">
+        <input id="city" v-model="city" type="text"
+            placeholder="Enter your city (e.g., Praha)" :class="{ 'error': errors.city }"
+            required autofocus>
+        <span class="error-message" v-if="errors.city">{{ errors.city }}</span>
       </div>
 
       <div class="input-group">
         <label for="weatherAPIKey">Weather API Key:</label>
-        <input id="weatherAPIKey" v-model="weatherAPIKey" placeholder="Weather API Key">
+        <input id="weatherAPIKey" v-model="weatherAPIKey" type="password"
+            placeholder="Enter your weather API key" :class="{ 'error': errors.weatherAPIKey }"
+            required>
+        <span class="error-message" v-if="errors.weatherAPIKey">{{ errors.weatherAPIKey }}</span>
       </div>
 
       <div class="input-group">
         <label for="backgroundImageUpload">Upload Background Image:</label>
-        <input id="backgroundImageUpload" type="file" accept="image/*" @change="onImageUpload">
+        <input
+            id="backgroundImageUpload"
+            type="file"
+            accept="image/*"
+            @change="onImageUpload"
+            placeholder="Select an image file">
+        <span class="hint">(JPEG, PNG or GIF, max 5MB)</span>
       </div>
     </div>
 
@@ -102,6 +150,7 @@ label {
 }
 
 input[type="text"],
+input[type="password"],
 input[type="file"] {
   width: 100%;
   padding: 10px;
@@ -109,6 +158,24 @@ input[type="file"] {
   border-radius: 6px;
   font-size: 1rem;
   box-sizing: border-box;
+}
+
+input.error {
+  border-color: #f44336;
+}
+
+.error-message {
+  color: #f44336;
+  font-size: 0.8rem;
+  display: block;
+  margin-top: 5px;
+}
+
+.hint {
+  color: #666;
+  font-size: 0.8rem;
+  display: block;
+  margin-top: 5px;
 }
 
 .preview-section {
