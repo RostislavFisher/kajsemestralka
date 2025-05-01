@@ -163,24 +163,38 @@ export default {
     },
     async fetchWeather() {
       try {
+        if (!this.weatherAPIKey || !this.weatherProvider) {
+          console.error('Missing weather configuration - API Key or Provider');
+          this.weatherData.temperature = "Configure";
+          return;
+        }
+
         const WeatherProviders = {
           OpenWeatherMap: OpenWeatherMap,
           WeatherAPI: WeatherAPI
         };
         const WeatherClass = WeatherProviders[this.weatherProvider];
+        if (!WeatherClass) {
+          console.error('Invalid weather provider:', this.weatherProvider);
+          this.weatherData.temperature = "Error";
+          return;
+        }
+
         const weather = new WeatherClass({
           apiKey: this.weatherAPIKey,
           city: this.city
         });
 
         const data = await weather.getWeather();
+        console.log('Raw weather data:', data);
+
         this.weatherData = {
-          temperature: data.temperature,
+          temperature: data.temperature || this.weatherData.temperature,
           sunrise: data.sunrise || this.weatherData.sunrise,
           sunset: data.sunset || this.weatherData.sunset,
-          description: data.description,
-          humidity: data.humidity,
-          windSpeed: data.windSpeed
+          description: data.description || this.weatherData.description,
+          humidity: data.humidity || this.weatherData.humidity,
+          windSpeed: data.windSpeed || this.weatherData.windSpeed
         };
 
         localStorage.setItem('city', this.city);
@@ -188,10 +202,10 @@ export default {
         localStorage.setItem('citySunrise', this.weatherData.sunrise);
         localStorage.setItem('citySunset', this.weatherData.sunset);
 
-        console.log('Weather data updated:', data);
       } catch (error) {
         console.error('Error fetching weather:', error);
         this.weatherData.temperature = "Error";
+        this.weatherData.description = "Failed to load";
       }
     },
     interpolateColor(color1, color2, factor) {
@@ -337,6 +351,7 @@ export default {
   padding: 20px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.9);
+  -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -355,18 +370,27 @@ export default {
 .weather-widget {
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.9);
+  -webkit-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 15px;
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 
 .weather-widget:hover {
+  -webkit-transform: translateY(-2px);
   transform: translateY(-2px);
+  -webkit-box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .weather-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
   height: 100%;
 }
@@ -405,7 +429,6 @@ export default {
   height: 100%;
 }
 
-
 .weather-footer {
   text-align: center;
   font-size: 0.9rem;
@@ -422,11 +445,13 @@ export default {
   padding: 20px;
   background: white;
   border-radius: 8px;
+  -webkit-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .interactiveModule {
   cursor: pointer;
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
   padding: 15px;
   margin-bottom: 15px;
@@ -435,7 +460,9 @@ export default {
 
 .interactiveModule:hover {
   background-color: #f8f9fa;
+  -webkit-transform: translateY(-3px);
   transform: translateY(-3px);
+  -webkit-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -446,7 +473,12 @@ export default {
   }
 
   .row.justify-content-between {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
   }
 
@@ -457,7 +489,6 @@ export default {
     width: 100% !important;
     max-width: none !important;
   }
-
 
   .clockTime {
     font-size: 2rem;
@@ -476,11 +507,6 @@ export default {
     margin: 10px auto;
   }
 
-  .celestial-body {
-    width: 16px !important;
-    height: 16px !important;
-  }
-
   .activeModules {
     padding: 10px;
     margin-top: 15px;
@@ -488,7 +514,12 @@ export default {
   }
 
   .activeModules .row {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
   }
 
@@ -518,6 +549,7 @@ export default {
   }
 
   .interactiveModule:hover {
+    -webkit-transform: none;
     transform: none;
   }
 

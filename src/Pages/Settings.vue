@@ -113,6 +113,7 @@ export default {
 .container {
   padding: 15px;
   max-width: 100%;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -131,6 +132,7 @@ header h1 {
   border-radius: 8px;
   padding: 15px;
   margin-bottom: 20px;
+  -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -157,6 +159,7 @@ input[type="file"] {
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 1rem;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -192,6 +195,7 @@ input.error {
   border-radius: 12px;
   font-size: 0.9rem;
   font-weight: bold;
+  -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   z-index: 1;
 }
@@ -208,33 +212,30 @@ input.error {
 .preview-container img {
   max-width: 100%;
   max-height: 200px;
+  -o-object-fit: cover;
   object-fit: cover;
   border-radius: 4px;
 }
 
 .button-group {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   gap: 10px;
   margin-top: 20px;
 }
 
 button {
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
   padding: 12px;
   border: none;
   border-radius: 6px;
   font-size: 1rem;
   cursor: pointer;
+  -webkit-transition: background-color 0.3s;
   transition: background-color 0.3s;
-}
-
-.reset-btn {
-  background-color: #f44336;
-  color: white;
-}
-
-.reset-btn:hover {
-  background-color: #d32f2f;
 }
 
 .save-btn {
@@ -252,6 +253,9 @@ button {
   }
 
   .button-group {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
     gap: 8px;
   }

@@ -20,8 +20,9 @@ export default {
 .module {
   border: 1px solid #ccc;
   padding: 10px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
   border-radius: 5px;
-  width: 200px;
   background-color: #f9f9f9;
   width:250px;
 }

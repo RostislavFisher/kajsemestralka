@@ -126,6 +126,7 @@ export default {
 .container {
   padding: 10px;
   max-width: 100%;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -143,6 +144,7 @@ export default {
   border-radius: 12px;
   font-size: 0.9rem;
   font-weight: bold;
+  -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   z-index: 1;
 }
@@ -152,13 +154,20 @@ export default {
   border: 2px dashed #ccc;
   border-radius: 8px;
   padding: 15px 10px 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
   flex-wrap: wrap;
   background-color: #f9f9f9;
   gap: 10px;
 }
 
 .module-container > div {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 calc(50% - 10px);
+  -ms-flex: 1 1 calc(50% - 10px);
   flex: 1 1 calc(50% - 10px);
   min-width: 120px;
   max-width: 100%;
@@ -174,6 +183,7 @@ button {
   border-radius: 6px;
   font-size: 1rem;
   cursor: pointer;
+  -webkit-transition: background-color 0.3s;
   transition: background-color 0.3s;
 }
 
@@ -183,6 +193,9 @@ button:hover {
 
 @media (max-width: 480px) {
   .module-container > div {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 100%;
+    -ms-flex: 1 1 100%;
     flex: 1 1 100%;
   }
 

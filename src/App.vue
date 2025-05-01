@@ -55,6 +55,8 @@ const backgroundImage = localStorage.getItem("backgroundImage");
 
 <style scoped>
 .page {
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
   overflow-y: auto;
 }
@@ -62,10 +64,14 @@ const backgroundImage = localStorage.getItem("backgroundImage");
 .linkingPanel {
   height: 60px;
   background: #f0f0f0;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
 }
 
 .linkingPanelContent {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   gap: 10px;
 }
