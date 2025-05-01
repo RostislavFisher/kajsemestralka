@@ -1,6 +1,7 @@
 <script>
 import Module from "@/components/Module.vue";
-import Weather from "../../classes/Weather.js";
+import WeatherAPI from "../../classes/Weather/WeatherAPI.js";
+import OpenWeatherMap from "../../classes/Weather/OpenWeatherMap.js";
 
 export default {
   name: "Main",
@@ -12,15 +13,30 @@ export default {
       currentTime: '',
       currentDate: '',
       city: localStorage.getItem("city") || "Prague",
-      cityTemp: localStorage.getItem("cityTemp") || "",
-      citySunrise: parseInt(localStorage.getItem("citySunrise")) || 0,
-      citySunset: parseInt(localStorage.getItem("citySunset")) || 0,
-      weatherAPIKey: localStorage.getItem("weatherAPIKey") || ""
+      weatherData: {
+        temperature: localStorage.getItem("cityTemp") || "",
+        sunrise: parseInt(localStorage.getItem("citySunrise")) || 0,
+        sunset: parseInt(localStorage.getItem("citySunset")) || 0,
+        description: "",
+        humidity: 0,
+        windSpeed: 0
+      },
+      weatherAPIKey: localStorage.getItem("weatherAPIKey") || "",
+      weatherProvider: localStorage.getItem("weatherProvider") || "OpenWeatherMap"
     };
   },
   computed: {
     formattedLocation() {
       return `${this.city}`;
+    },
+    cityTemp() {
+      return this.weatherData.temperature ? `${Math.round(this.weatherData.temperature)}°C` : "";
+    },
+    citySunrise() {
+      return this.weatherData.sunrise;
+    },
+    citySunset() {
+      return this.weatherData.sunset;
     },
     celestialBody() {
       const now = Date.now();
@@ -147,25 +163,35 @@ export default {
     },
     async fetchWeather() {
       try {
-        const weather = new Weather({
-          city: this.city,
-          weatherAPIKey: this.weatherAPIKey
+        const WeatherProviders = {
+          OpenWeatherMap: OpenWeatherMap,
+          WeatherAPI: WeatherAPI
+        };
+        const WeatherClass = WeatherProviders[this.weatherProvider];
+        const weather = new WeatherClass({
+          apiKey: this.weatherAPIKey,
+          city: this.city
         });
 
         const data = await weather.getWeather();
-        this.cityTemp = `${Math.round(data.main.temp)}°C`;
-        this.citySunrise = data.sys.sunrise;
-        this.citySunset = data.sys.sunset;
+        this.weatherData = {
+          temperature: data.temperature,
+          sunrise: data.sunrise || this.weatherData.sunrise,
+          sunset: data.sunset || this.weatherData.sunset,
+          description: data.description,
+          humidity: data.humidity,
+          windSpeed: data.windSpeed
+        };
 
         localStorage.setItem('city', this.city);
-        localStorage.setItem('cityTemp', this.cityTemp);
-        localStorage.setItem('citySunrise', this.citySunrise);
-        localStorage.setItem('citySunset', this.citySunset);
+        localStorage.setItem('cityTemp', this.weatherData.temperature);
+        localStorage.setItem('citySunrise', this.weatherData.sunrise);
+        localStorage.setItem('citySunset', this.weatherData.sunset);
 
         console.log('Weather data updated:', data);
       } catch (error) {
         console.error('Error fetching weather:', error);
-        this.cityTemp = "Error";
+        this.weatherData.temperature = "Error";
       }
     },
     interpolateColor(color1, color2, factor) {
