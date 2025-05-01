@@ -18,6 +18,8 @@ class OpenWeatherMap extends Weather {
             humidity: data.main.humidity,
             description: data.weather[0].description,
             windSpeed: data.wind.speed,
+            sunrise: data.sys.sunrise,
+            sunset: data.sys.sunset,
             icon: data.weather[0].icon
         };
     }
