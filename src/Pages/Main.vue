@@ -10,8 +10,10 @@ export default {
     return {
       activeInteractiveModules: [],
       activeInformativeModules: [],
+
       currentTime: '',
       currentDate: '',
+
       city: localStorage.getItem("city") || "Prague",
       weatherData: {
         temperature: localStorage.getItem("cityTemp") || "",
@@ -26,18 +28,23 @@ export default {
     };
   },
   computed: {
+    // Format location for display
     formattedLocation() {
       return `${this.city}`;
     },
+    // Format temperature with °C
     cityTemp() {
       return this.weatherData.temperature ? `${Math.round(this.weatherData.temperature)}°C` : "";
     },
+    // Get sunrise time
     citySunrise() {
       return this.weatherData.sunrise;
     },
+    // Get sunset time
     citySunset() {
       return this.weatherData.sunset;
     },
+    // Calculate celestial body (sun/moon) position and appearance
     celestialBody() {
       const now = Date.now();
       const sunrise = this.citySunrise * 1000;
@@ -46,11 +53,13 @@ export default {
       const totalDayDuration = sunset - sunrise;
 
       if (isDaytime) {
+        // Calculate sun position during daytime
         const progress = (now - sunrise) / totalDayDuration;
         const angle = progress * Math.PI;
         const x = 20 + progress * 160;
         const y = 80 - Math.sin(angle) * 70;
 
+        // Calculate sun color based on time of day
         const red = 255;
         const green = Math.floor(220 - Math.abs(progress - 0.5) * 100);
         const blue = Math.floor(50 + Math.abs(progress - 0.5) * 100);
@@ -64,6 +73,7 @@ export default {
         };
       }
       else {
+        // Calculate moon position during nighttime
         const nextSunrise = sunrise + 24 * 3600 * 1000;
         const nightProgress = now < sunrise
             ? (now + 24 * 3600 * 1000 - sunset) / (nextSunrise - sunset)
@@ -82,44 +92,50 @@ export default {
         };
       }
     },
+    // Calculate sky color based on time of day
     skyColor() {
       const now = Date.now();
       const sunrise = this.citySunrise * 1000;
       const sunset = this.citySunset * 1000;
 
+      // Different color phases throughout the day/night cycle
       if (now < sunrise - 3600000) {
-        return "#0b0e23";
+        return "#0b0e23"; // Deep night
       } else if (now >= sunrise - 3600000 && now < sunrise) {
         const progress = (now - (sunrise - 3600000)) / 3600000;
-        return this.interpolateColor("#0b0e23", "#1a3a6a", progress);
+        return this.interpolateColor("#0b0e23", "#1a3a6a", progress); // Pre-dawn
       } else if (now >= sunrise && now < sunrise + 1800000) {
         const progress = (now - sunrise) / 1800000;
-        return this.interpolateColor("#1a3a6a", "#87CEEB", progress);
+        return this.interpolateColor("#1a3a6a", "#87CEEB", progress); // Early morning
       } else if (now >= sunrise + 1800000 && now < sunset - 1800000) {
-        return "#87CEEB";
+        return "#87CEEB"; // Daytime
       } else if (now >= sunset - 1800000 && now < sunset) {
         const progress = (now - (sunset - 1800000)) / 1800000;
-        return this.interpolateColor("#87CEEB", "#1a3a6a", progress);
+        return this.interpolateColor("#87CEEB", "#1a3a6a", progress); // Evening
       } else if (now >= sunset && now < sunset + 3600000) {
         const progress = (now - sunset) / 3600000;
-        return this.interpolateColor("#1a3a6a", "#0b0e23", progress);
+        return this.interpolateColor("#1a3a6a", "#0b0e23", progress); // Nightfall
       } else {
-        return "#0b0e23";
+        return "#0b0e23"; // Night
       }
     },
+    // Check if sun is visible
     isSunVisible() {
       return this.celestialBody.type === "sun";
     },
+    // Check if it's sunrise time
     isSunrise() {
       const now = Date.now();
       const sunrise = this.citySunrise * 1000;
       return now >= sunrise && now < sunrise + 1800000;
     },
+    // Check if it's sunset time
     isSunset() {
       const now = Date.now();
       const sunset = this.citySunset * 1000;
       return now >= sunset - 1800000 && now < sunset;
     },
+    // Check if it's nighttime
     isNight() {
       const now = Date.now();
       const sunrise = this.citySunrise * 1000;
@@ -127,22 +143,27 @@ export default {
       return now < sunrise || now > sunset;
     },
   },
+  // Lifecycle hook when component is mounted
   mounted() {
     this.loadModules();
     this.updateTime();
+    // Set up intervals for time, weather, and modules updates
     this.interval = setInterval(() => {
       this.updateTime();
     }, 100);
-    this.weatherInterval = setInterval(this.fetchWeather, 600000);
+    this.weatherInterval = setInterval(this.fetchWeather, 600000); // 10 minutes
     this.modulesInterval = setInterval(this.loadModules, 500);
     this.fetchWeather();
   },
+  // Lifecycle hook before component is destroyed
   beforeUnmount() {
+    // Clear all intervals to prevent memory leaks
     clearInterval(this.interval);
     clearInterval(this.weatherInterval);
     clearInterval(this.modulesInterval);
   },
   methods: {
+    // Load active modules from localStorage
     loadModules() {
       try {
         this.activeInteractiveModules = JSON.parse(localStorage.getItem("activeInteractiveModules")) || [];
@@ -152,23 +173,28 @@ export default {
         this.activeInformativeModules = [];
       }
     },
+    // Toggle module state and save to localStorage
     toggleModuleState(module) {
       module.isToggled = !module.isToggled;
       localStorage.setItem("activeInteractiveModules", JSON.stringify(this.activeInteractiveModules));
     },
+    // Update current time and date
     updateTime() {
       const now = new Date();
       this.currentTime = now.toLocaleTimeString("en-GB");
       this.currentDate = now.toLocaleDateString("en-GB");
     },
+    // Fetch weather data from selected provider
     async fetchWeather() {
       try {
+        // Check if weather configuration exists
         if (!this.weatherAPIKey || !this.weatherProvider) {
           console.error('Missing weather configuration - API Key or Provider');
           this.weatherData.temperature = "Configure";
           return;
         }
 
+        // Map of available weather providers
         const WeatherProviders = {
           OpenWeatherMap: OpenWeatherMap,
           WeatherAPI: WeatherAPI
@@ -180,14 +206,17 @@ export default {
           return;
         }
 
+        // Create weather provider instance
         const weather = new WeatherClass({
           apiKey: this.weatherAPIKey,
           city: this.city
         });
 
+        // Get weather data
         const data = await weather.getWeather();
         console.log('Raw weather data:', data);
 
+        // Update weather data
         this.weatherData = {
           temperature: data.temperature || this.weatherData.temperature,
           sunrise: data.sunrise || this.weatherData.sunrise,
@@ -197,6 +226,7 @@ export default {
           windSpeed: data.windSpeed || this.weatherData.windSpeed
         };
 
+        // Save to localStorage
         localStorage.setItem('city', this.city);
         localStorage.setItem('cityTemp', this.weatherData.temperature);
         localStorage.setItem('citySunrise', this.weatherData.sunrise);
@@ -208,7 +238,9 @@ export default {
         this.weatherData.description = "Failed to load";
       }
     },
+    // Interpolate between two colors based on factor
     interpolateColor(color1, color2, factor) {
+      // Convert hex color to RGB array
       const hex = color => {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
         return result ? [
@@ -221,15 +253,18 @@ export default {
       const rgb1 = hex(color1) || [0, 0, 0];
       const rgb2 = hex(color2) || [0, 0, 0];
 
+      // Calculate interpolated color
       const result = rgb1.map((channel, i) => {
         return Math.round(channel + factor * (rgb2[i] - channel));
       });
 
       return `rgb(${result.join(',')})`;
     },
+    // Refresh weather data
     refreshWeather() {
       this.fetchWeather();
     },
+    // Format timestamp to readable time
     formatTime(timestamp) {
       return new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     }
@@ -239,13 +274,17 @@ export default {
 
 <template>
   <main class="container">
+    <!-- Top row with clock and weather widget -->
     <section class="row justify-content-between">
+      <!-- Clock component -->
       <div class="col-4 clock">
         <div>
           <p class="clockTime">{{ currentTime }}</p>
           <p class="clockDate">{{ currentDate }}</p>
         </div>
       </div>
+
+      <!-- Weather widget component -->
       <div class="col-4 weather-widget">
         <div class="weather-container">
           <header class="weather-header" @click="refreshWeather">
@@ -253,6 +292,7 @@ export default {
             <div class="temperature">{{ cityTemp }}</div>
           </header>
 
+          <!-- Sky display with sun/moon animation -->
           <div class="sky-display">
             <svg :width="'100%'" :height="'100%'" :style="{ backgroundColor: skyColor }">
               <circle
@@ -275,6 +315,7 @@ export default {
             </svg>
           </div>
 
+          <!-- Weather footer with celestial info -->
           <footer class="weather-footer">
             <div v-if="isNight" class="celestial-info">
               🌙 Next sunrise: {{ formatTime(citySunrise * 1000) }}
@@ -294,15 +335,17 @@ export default {
       </div>
     </section>
 
+    <!-- Bottom row with modules -->
     <section class="row justify-content-between">
       <div class="col-12">
-
+        <!-- Navigation to active modules -->
         <nav>
           <router-link to="/activemodules">
             <button type="button">Active Modules</button>
           </router-link>
         </nav>
 
+        <!-- Active interactive modules section -->
         <section class="activeModules">
           <h3>Active Interactive Modules</h3>
           <div v-if="activeInteractiveModules.length === 0">
@@ -316,6 +359,7 @@ export default {
           </div>
         </section>
 
+        <!-- Active informative modules section -->
         <section class="activeModules">
           <h3>Active Informative Modules</h3>
           <div v-if="activeInformativeModules.length === 0">

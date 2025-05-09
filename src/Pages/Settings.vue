@@ -13,22 +13,28 @@ export default {
     }
   },
   methods: {
+    // Validates the input fields
     validate() {
       let isValid = true;
 
+      // Reset error messages
       this.errors = {
         city: "",
         weatherAPIKey: ""
       };
 
+      // Validate city field
       if (!this.city.trim()) {
         this.errors.city = "City is required";
         isValid = false;
-      } else if (!/^[a-zA-Z\u0080-\u024F\s\/\-\)\(\`\.\"\']+$/.test(this.city)) {
+      }
+      // Check for valid city name characters (allows international characters and common punctuation)
+      else if (!/^[a-zA-Z\u0080-\u024F\s\/\-\)\(\`\.\"\']+$/.test(this.city)) {
         this.errors.city = "City contains invalid characters";
         isValid = false;
       }
 
+      // Validate API key field (just checks for presence)
       if (!this.weatherAPIKey.trim()) {
         this.errors.weatherAPIKey = "API key is required";
         isValid = false;
@@ -36,26 +42,36 @@ export default {
 
       return isValid;
     },
+
+    // Saves the settings to localStorage
     save() {
+      // Don't save if validation fails
       if (!this.validate()) {
         return;
       }
+
+      // Save all values to localStorage
       localStorage.setItem("city", this.city);
       localStorage.setItem("weatherAPIKey", this.weatherAPIKey);
-      localStorage.setItem("cityTemp", "");
+      localStorage.setItem("cityTemp", ""); // Clear cached temperature
       localStorage.setItem("backgroundImage", this.backgroundImage);
     },
+
+    // Handles the image upload
     onImageUpload(event) {
       const file = event.target.files[0];
-      if (!file) return;
+      if (!file) return; // Exit if no file selected
 
+      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert("Image must be smaller than 5MB");
         return;
       }
 
+      // Read the file as a data URL
       const reader = new FileReader();
       reader.onload = (e) => {
+        // Set the background image to the data URL
         this.backgroundImage = e.target.result;
       };
       reader.readAsDataURL(file);
@@ -66,8 +82,11 @@ export default {
 
 <template>
   <div class="container">
+    <!-- Settings Form Section -->
     <div class="settings-section">
       <h2>Settings</h2>
+
+      <!-- City Input Field -->
       <div class="input-group">
         <label for="city">City:</label>
         <input id="city" v-model="city" type="text"
@@ -76,6 +95,7 @@ export default {
         <span class="error-message" v-if="errors.city">{{ errors.city }}</span>
       </div>
 
+      <!-- Weather API Key Input Field -->
       <div class="input-group">
         <label for="weatherAPIKey">Weather API Key:</label>
         <input id="weatherAPIKey" v-model="weatherAPIKey" type="password"
@@ -84,6 +104,7 @@ export default {
         <span class="error-message" v-if="errors.weatherAPIKey">{{ errors.weatherAPIKey }}</span>
       </div>
 
+      <!-- Background Image Upload Field -->
       <div class="input-group">
         <label for="backgroundImageUpload">Upload Background Image:</label>
         <input
@@ -96,6 +117,7 @@ export default {
       </div>
     </div>
 
+    <!-- Background Image Preview Section (shown only when image exists) -->
     <div class="preview-section" v-if="backgroundImage">
       <span class="preview-label">Background preview:</span>
       <div class="preview-container">
@@ -103,6 +125,7 @@ export default {
       </div>
     </div>
 
+    <!-- Save Button -->
     <div class="button-group">
       <button class="save-btn" @click="save">Save</button>
     </div>

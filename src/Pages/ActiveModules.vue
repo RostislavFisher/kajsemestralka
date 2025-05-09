@@ -25,44 +25,55 @@ export default {
     clearInterval(this.interval);
   },
   methods: {
+    // Add a new interactive module
     addInteractiveModule() {
       this.activeInteractiveModules.push(new ModuleInteractive());
-      this.saveModules();
+      this.saveModules(); // Persist changes
     },
+    // Add a new informative module
     addInformativeModule() {
       this.activeInformativeModules.push(new ModuleInformative());
-      this.saveModules();
+      this.saveModules(); // Persist changes
     },
+    // Helper method to safely get modules from localStorage
     getModules(key) {
       try {
         return JSON.parse(localStorage.getItem(key)) || [];
       } catch {
-        return [];
+        return []; // Return empty array if parsing fails
       }
     },
+    // Load all module states from localStorage
     loadModules() {
       this.activeInteractiveModules = this.getModules("activeInteractiveModules");
       this.inactiveInteractiveModules = this.getModules("inactiveInteractiveModules");
       this.activeInformativeModules = this.getModules("activeInformativeModules");
       this.inactiveInformativeModules = this.getModules("inactiveInformativeModules");
     },
+    // Save all module states to localStorage
     saveModules() {
       localStorage.setItem("activeInteractiveModules", JSON.stringify(this.activeInteractiveModules));
       localStorage.setItem("inactiveInteractiveModules", JSON.stringify(this.inactiveInteractiveModules));
       localStorage.setItem("activeInformativeModules", JSON.stringify(this.activeInformativeModules));
       localStorage.setItem("inactiveInformativeModules", JSON.stringify(this.inactiveInformativeModules));
     },
+    // Handle drag start event for module reordering
     onDragStart(event, module, fromList) {
+      // Store module data and source list in drag event
       event.dataTransfer.setData("module", JSON.stringify(module));
       event.dataTransfer.setData("fromList", fromList);
     },
+    // Handle drop event for module reordering
     onDrop(event, toList) {
+      // Retrieve module data and source list from drag event
       const module = JSON.parse(event.dataTransfer.getData("module"));
       const fromList = event.dataTransfer.getData("fromList");
 
+      // Check module type compatibility
       const isInteractive = fromList.includes("Interactive");
       const isInformative = fromList.includes("Informative");
 
+      // Prevent mixing module types (interactive vs informative)
       if (
           (isInteractive && !toList.includes("Interactive")) ||
           (isInformative && !toList.includes("Informative"))
@@ -70,6 +81,7 @@ export default {
         return;
       }
 
+      // Helper function to find and remove module from source list
       const findAndRemove = (list) => {
         const index = this[list].findIndex(m => m.id === module.id);
         if (index !== -1) {
@@ -77,10 +89,11 @@ export default {
         }
       };
 
+      // Remove from source and add to target list
       findAndRemove(fromList);
       this[toList].push(module);
 
-      this.saveModules();
+      this.saveModules(); // Persist changes
     }
 
 
@@ -90,6 +103,7 @@ export default {
 
 <template>
   <div class="container">
+    <!-- Active Interactive Modules Section -->
     <div class="module-dropzone">
       <span class="module-type-label">Active Interactive Modules</span>
       <div class="module-container" @dragover.prevent @drop="onDrop($event, 'activeInteractiveModules')">
@@ -97,6 +111,7 @@ export default {
       </div>
     </div>
 
+    <!-- Inactive Interactive Modules Section -->
     <div class="module-dropzone">
       <span class="module-type-label">Inactive Interactive Modules</span>
       <div class="module-container" @dragover.prevent @drop="onDrop($event, 'inactiveInteractiveModules')">
@@ -105,6 +120,7 @@ export default {
     </div>
     <button @click="addInteractiveModule">Add new interactive module</button>
 
+    <!-- Active Informative Modules Section -->
     <div class="module-dropzone">
       <span class="module-type-label">Active Informative Modules</span>
       <div class="module-container" @dragover.prevent @drop="onDrop($event, 'activeInformativeModules')">
@@ -112,6 +128,7 @@ export default {
       </div>
     </div>
 
+    <!-- Inactive Informative Modules Section -->
     <div class="module-dropzone">
       <span class="module-type-label">Inactive Informative Modules</span>
       <div class="module-container" @dragover.prevent @drop="onDrop($event, 'inactiveInformativeModules')">
