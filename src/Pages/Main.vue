@@ -299,11 +299,11 @@ export default {
                   :cx="celestialBody.x"
                   :cy="celestialBody.y"
                   :r="celestialBody.radius"
-                  :fill="celestialBody.color"
                   :class="[celestialBody.type, {
                   'sunrise-effect': isSunrise,
                   'sunset-effect': isSunset
                 }]"
+                  :style="{ fill: celestialBody.color }"
                   :filter="isSunVisible ? 'url(#sun-glow)' : 'none'"
               />
               <defs>
