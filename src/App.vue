@@ -90,4 +90,17 @@ const backgroundImage = localStorage.getItem("backgroundImage");
   display: flex;
   gap: 10px;
 }
+
+:deep(button) {
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+}
 </style>
