@@ -1,15 +1,20 @@
 <script>
+import OpenWeatherMap from "../../classes/Weather/OpenWeatherMap.js";
+import WeatherAPI from "../../classes/Weather/WeatherAPI.js";
+
 export default {
   name: "Settings",
   data() {
     return {
       city: localStorage.getItem("city") || "Praha",
       weatherAPIKey: localStorage.getItem("weatherAPIKey") || "",
+      weatherProvider: localStorage.getItem("weatherProvider") || "OpenWeatherMap",
       backgroundImage: localStorage.getItem("backgroundImage") || "",
       errors: {
         city: "",
         weatherAPIKey: ""
-      }
+      },
+      availableProviders: [OpenWeatherMap.name, WeatherAPI.name]
     }
   },
   methods: {
@@ -53,6 +58,7 @@ export default {
       // Save all values to localStorage
       localStorage.setItem("city", this.city);
       localStorage.setItem("weatherAPIKey", this.weatherAPIKey);
+      localStorage.setItem("weatherProvider", this.weatherProvider);
       localStorage.setItem("cityTemp", ""); // Clear cached temperature
       localStorage.setItem("backgroundImage", this.backgroundImage);
       // restart the app to apply changes
@@ -77,6 +83,11 @@ export default {
         this.backgroundImage = e.target.result;
       };
       reader.readAsDataURL(file);
+    },
+
+    // Changes the weather provider
+    changeProvider(provider) {
+      this.weatherProvider = provider;
     }
   }
 }
@@ -104,6 +115,20 @@ export default {
             placeholder="Enter your weather API key" :class="{ 'error': errors.weatherAPIKey }"
             required>
         <span class="error-message" v-if="errors.weatherAPIKey">{{ errors.weatherAPIKey }}</span>
+      </div>
+
+      <!-- Weather Provider Selection -->
+      <div class="input-group">
+        <label>Weather Provider:</label>
+        <div class="provider-buttons">
+          <button
+              v-for="provider in availableProviders"
+              :key="provider"
+              @click="changeProvider(provider)"
+              :class="{ 'active': weatherProvider === provider }">
+            {{ provider }}
+          </button>
+        </div>
       </div>
 
       <!-- Background Image Upload Field -->
@@ -271,6 +296,36 @@ button {
 .save-btn:hover {
   background-color: #45a049;
 }
+.provider-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+.provider-buttons button {
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.provider-buttons button:hover {
+  background-color: #e0e0e0;
+}
+
+.provider-buttons button.active {
+  background-color: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+.hint {
+  font-size: 0.8em;
+  color: #666;
+}
+
+
 
 @media (max-width: 480px) {
   header h1 {
