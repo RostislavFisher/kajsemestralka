@@ -55,6 +55,8 @@ export default {
       localStorage.setItem("weatherAPIKey", this.weatherAPIKey);
       localStorage.setItem("cityTemp", ""); // Clear cached temperature
       localStorage.setItem("backgroundImage", this.backgroundImage);
+      // restart the app to apply changes
+      window.location.reload();
     },
 
     // Handles the image upload
