@@ -16,4 +16,8 @@ export default defineConfig({
     },
   },
   base: process.env.NODE_ENV === 'production' ? '/kajsemestralka/' : '/',
+  server: {
+    host: process.env.NODE_ENV === 'development' ? '0.0.0.0' : 'localhost',
+    port: 8080,
+  },
 })
